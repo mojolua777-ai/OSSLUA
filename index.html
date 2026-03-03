@@ -22,15 +22,31 @@
         }
         #sand-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         
-        .app { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        /* 优化 app 容器布局 */
+        .app { 
+            position: relative; z-index: 10; height: 100%; 
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 40px 20px env(safe-area-inset-bottom); /* 增加顶部间距并考虑安全区域 */
+        }
         
-        header { text-align: center; margin-bottom: 5px; }
+        header { text-align: center; margin-bottom: 5px; flex-shrink: 0; }
         h1 { font-size: 1.6rem; letter-spacing: 12px; margin: 0; font-weight: 100; text-indent: 12px; color: #111; }
         .sub-title { font-size: 0.5rem; color: #ccc; margin-top: 5px; letter-spacing: 3px; }
 
+        /* 让中间的内容区自适应 */
+        .content-wrap {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-height: 70vh; /* 限制中间区域高度，防止挤压底部 */
+        }
+
         .symbol-container {
             height: 120px; width: 100%; display: flex; flex-direction: row;
-            justify-content: center; align-items: center; margin: 45px 0; 
+            justify-content: center; align-items: center; margin: 25px 0; 
             opacity: 0; transition: opacity 1.5s var(--ease-out-expo);
         }
         .symbol-container.show { opacity: 1; }
@@ -41,7 +57,7 @@
         }
         .dot { width: var(--dot-size); height: var(--dot-size); background: #111; border-radius: 50%; margin: 4px 0; }
 
-        .basic-info { text-align: center; margin-bottom: 25px; opacity: 0; transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo); transform: translateY(10px); }
+        .basic-info { text-align: center; margin-bottom: 20px; opacity: 0; transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo); transform: translateY(10px); }
         .basic-info.show { opacity: 1; transform: translateY(0); }
         .m-name { font-size: 1.6rem; letter-spacing: 6px; font-weight: 300; color: #222; }
         .m-core { font-size: 0.85rem; color: #999; margin-top: 10px; letter-spacing: 4px; }
@@ -60,24 +76,32 @@
         .cat-btn.active { color: #000; font-weight: 400; }
 
         .detail-box {
-            margin-top: 15px; width: 100%; max-width: 400px; min-height: 140px;
+            margin-top: 10px; width: 100%; max-width: 400px; min-height: 120px;
             text-align: left; padding: 10px 5px; opacity: 0; transition: opacity 0.5s ease;
-            overflow-y: auto; max-height: 160px;
+            overflow-y: auto; max-height: 150px;
         }
         .detail-box.show { opacity: 1; }
         .detail-content { font-size: 0.82rem; line-height: 1.7; color: #555; }
         .detail-title { font-size: 0.9rem; color: #111; font-weight: 400; display: block; margin-bottom: 8px; border-left: 3px solid #111; padding-left: 10px; }
 
-        .trigger-group { display: flex; flex-direction: column; align-items: center; margin-top: 25px; }
+        /* 底部触发组增加下边距，远离 footer */
+        .trigger-group { 
+            display: flex; flex-direction: column; align-items: center; 
+            margin-top: 20px; margin-bottom: 60px; /* 关键：确保不紧贴底部 */
+            flex-shrink: 0;
+        }
         .trigger-hint { font-size: 0.65rem; color: #ccc; letter-spacing: 3px; margin-bottom: 10px; }
         .main-trigger {
-            background: transparent; border: 1px solid rgba(0,0,0,0.1); padding: 10px 30px; 
+            background: transparent; border: 1px solid rgba(0,0,0,0.1); padding: 12px 35px; 
             border-radius: 30px; font-size: 0.85rem; cursor: pointer; letter-spacing: 8px; transition: 0.3s; 
             color: #444; text-indent: 8px; font-weight: 300;
         }
-        .main-trigger:active { background: #fafafa; transform: scale(0.98); }
+        .main-trigger:active { background: #fafafa; transform: scale(0.96); }
 
-        .footer { position: fixed; bottom: 12px; width: 100%; text-align: center; font-size: 0.5rem; color: #ccc; z-index: 10; }
+        .footer { 
+            position: absolute; bottom: 20px; width: 100%; text-align: center; 
+            font-size: 0.5rem; color: #ddd; z-index: 10; line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -87,39 +111,44 @@
             <h1>密视</h1>
             <div class="sub-title">THE OSSQLUA VISION</div>
         </header>
-        <div id="symbolArea" class="symbol-container"></div>
-        <div id="infoArea" class="basic-info">
-            <div id="mName" class="m-name"></div>
-            <div id="mCore" class="m-core"></div>
+
+        <div class="content-wrap">
+            <div id="symbolArea" class="symbol-container"></div>
+            <div id="infoArea" class="basic-info">
+                <div id="mName" class="m-name"></div>
+                <div id="mCore" class="m-core"></div>
+            </div>
+            <div id="catGrid" class="category-grid">
+                <div class="cat-btn" onclick="showDetail('love', event)">爱情</div>
+                <div class="cat-btn" onclick="showDetail('money', event)">金钱</div>
+                <div class="cat-btn" onclick="showDetail('work', event)">事业</div>
+                <div class="cat-btn" onclick="showDetail('people', event)">人际</div>
+                <div class="cat-btn" onclick="showDetail('health', event)">健康</div>
+                <div class="cat-btn" onclick="showDetail('advice', event)">建议</div>
+                <div class="cat-btn" onclick="showDetail('place', event)">位置</div>
+                <div class="cat-btn" onclick="showDetail('assoc', event)">物品</div>
+                <div class="cat-btn" onclick="showDetail('person', event)">人物</div>
+                <div class="cat-btn" onclick="showDetail('spirit', event)">神秘</div>
+            </div>
+            <div id="detailBox" class="detail-box"><div id="detailContent" class="detail-content"></div></div>
         </div>
-        <div id="catGrid" class="category-grid">
-            <div class="cat-btn" onclick="showDetail('love', event)">爱情</div>
-            <div class="cat-btn" onclick="showDetail('money', event)">金钱</div>
-            <div class="cat-btn" onclick="showDetail('work', event)">事业</div>
-            <div class="cat-btn" onclick="showDetail('people', event)">人际</div>
-            <div class="cat-btn" onclick="showDetail('health', event)">健康</div>
-            <div class="cat-btn" onclick="showDetail('advice', event)">建议</div>
-            <div class="cat-btn" onclick="showDetail('place', event)">位置</div>
-            <div class="cat-btn" onclick="showDetail('assoc', event)">物品</div>
-            <div class="cat-btn" onclick="showDetail('person', event)">人物</div>
-            <div class="cat-btn" onclick="showDetail('spirit', event)">神秘</div>
-        </div>
-        <div id="detailBox" class="detail-box"><div id="detailContent" class="detail-content"></div></div>
+
         <div class="trigger-group">
             <div class="trigger-hint">专注你的问题</div>
             <button id="drawBtn" class="main-trigger" onclick="mishiCast()">呼唤密语</button>
         </div>
+
         <div class="footer">BY LUA 奥识禄安密语占卜系统<br>仅供娱乐 请勿迷信</div>
     </div>
 
 <script>
     const MISHI_DB = [
         { name: "ARA · 逸", symbol: [1, 0, 1, 0, 1, 0, 1], core: "外放 脱离 扩散", love: "关系趋向自由或疏离/若在温存期，暗示需要个人空间/单身者易有短暂关系或肉体关系", money: "财气外溢，进账快但守不住，但适合高流动性投资", work: "工作自由或无业/适合创意、跨界或出差/若工作感到压抑，则暗示该跳槽了", people: "散漫不深入的社交网络/会认识远方或背景完全不同的人", health: "通常是健康的｜可注意呼吸系统、传染、注意力/专注力类问题", advice: "让自己处在放松、洒脱的心态/不要试图抓紧，放手试试看", place: "状态：上方/北方<br>类型：机场/楼顶/开阔广场/通风口/空中", assoc: "风铃/羽毛/气流调节设备/会飞或处在空中的物件", person: "自由职业者/飞行员/性格飘忽不定的/自由散漫的 /远方客人", spirit: "状态：能量不够集中/灵体没有到达或形成（除非符合【类型】的内容）<br>类型：属于风/空/扩散需求/自由目的相关的魔法或灵体" },
-        { name: "VIRA · 战", symbol: [0, 0, 0, 1, 0, 0, 0], core: "对抗 竞争 剧烈", love: "关系处于暧昧博弈期/和伴侣常发生冲突矛盾甚至出现暴力/与情敌竞争/暴力的性爱/BDSM", money: "财运来自风险与争夺/可能涉及法律诉讼或强行讨债", work: "攻坚阶段/职场竞争/交涉展现强硬姿态", people: "关系紧张/容易遇到挑衅者或树敌/也可能因为对抗而产生深刻联结", health: "通常不健康｜注意急性疾病、发热发烧、炎症、外伤出血、高血压、胆囊、应激性问题", advice: "用行动和力量说话/此时后退会输掉全局", place: "状态：前方/南方<br>类型：健身房/炎热场所/战场/战争遗址/繁忙区域", assoc: "刀具/热的东西/武器/金属器械/红色物品/火源", person: "战士/对手/运动员/好战者/急躁的/皮肤黝黑的/肌肉发达的", spirit: "状态：魔法剧烈生效/可能导致过度干预/危险灵体（除非符合【类型】的内容）<br>类型：属于战神类、防护型或极具攻击性的魔法或灵性" },
+        { name: "VIRA · 战", symbol: [0, 0, 0, 1, 0, 0, 0], core: "对抗 竞争 剧烈", love: "关系处于暧昧博弈期/和伴侣常发生冲突矛盾甚至出现暴力/与情敌竞争/暴力的性爱/BDSM", money: "财运来自风险与争夺/可能涉及法律诉讼或强行讨债", work: "攻坚阶段/职场竞争/交涉展现强硬姿态", people: "关系紧张/容易遇到挑衅者或敌/也可能因为对抗而产生深刻联结", health: "通常不健康｜注意急性疾病、发热发烧、炎症、外伤出血、高血压、胆囊、应激性问题", advice: "用行动和力量说话/此时后退会输掉全局", place: "状态：前方/南方<br>类型：健身房/炎热场所/战场/战争遗址/繁忙区域", assoc: "刀具/热的东西/武器/金属器械/红色物品/火源", person: "战士/对手/运动员/好战者/急躁的/皮肤黝黑的/肌肉发达的", spirit: "状态：魔法剧烈生效/可能导致过度干预/危险灵体（除非符合【类型】的内容）<br>类型：属于战神类、防护型或极具攻击性的魔法或灵性" },
         { name: "ELWA · 变", symbol: [1, 1, 1, 0, 1, 1, 1], core: "移动 迁转 变化", love: "感情变动/异地恋/和伴侣搬迁、旅行", money: "高流动性财富/物流/远距贸易/静坐守财反而会导致亏损", work: "职位调动/项目转型/目前的工作地点或内容发生改变", people: "贵人在远方或旅途之中 需要频繁出访或保持联络才能维系人脉", health: "健康情况来回浮动｜病情迎来转变/注意臀部、腿、足、关节问题", advice: "迎接变化/去旅行/选择搬家", place: "状态：右侧/东方<br>类型：路上/交通场所/物流仓库/管道中", assoc: "鞋/地图/行李箱/指南针/交通工具/五颜六色的物品", person: "信使/中介/司机/向导/频繁出差的/易变的/成长型的", spirit: "状态：魔法在发挥作用/灵体来去匆匆<br>类型：形象不定的灵体/带来转变的魔法或灵体/遥远的灵体/远距离施展的魔法" },
         { name: "ZERA · 始", symbol: [0, 1, 1, 1, 1, 1, 1], core: "开端 萌芽 潜力", love: "新火花/暧昧萌芽/不成熟的恋情/可能怀孕的信号", money: "新财路出现/投入期/目前见不到回头钱/适合小额试水", work: "新项目立项/职业生涯转折点/一切规则尚不明确/容易夭折", people: "结交新势力/初次接触/尚未建立深层信任", health: "注意增生、过敏反应、发疹、轻微偏头痛、新生组织的病变、免疫系统应激", advice: "耐心守护雏形/不要拔苗助长/坚持创新", place: "状态：上方/东方<br>类型：新家/产房/实验室/新装修的房间/苗圃", assoc: "新东西/种子/幼苗/蛋类/日历第一页/新生儿用品/透明物品", person: "创始人/学徒/新手/刚步入社会的/充满好奇心的", spirit: "状态：魔法刚开始生效/灵体刚到达<br>类型：创造型魔法或灵体/新型魔法或灵体/孩童灵体/星光机器" },
         { name: "OTO · 执", symbol: [1, 1, 1, 1, 1, 1, 1], core: "稳固 僵化 承载", love: "关系稳固/对某人执念/高责任感/感到压抑/冷战", money: "固定资产/长期持有/现金流缓慢/守财", work: "事业定型/守成期/难以做出改变/承担沉重的管理责任", people: "老友/可靠但保守的盟友/关系难以逾越既定边界", health: "通常是健康的｜可注意骨头、脊椎僵硬、结石、组织钙化、牙齿问题", advice: "坚持现状/打好基础/不要破坏地基/稳固比突破更重要", place: "状态：中央/下方<br>类型：地上/地窖/山/地基/石头建筑/保险库", assoc: "固体/坚硬物品/印章/石头/保险柜/金色物品", person: "长辈/守财奴/房地产商/固执的/值得信赖的", spirit: "状态：魔法稳定成功/灵体长期驻留<br>类型：束缚类魔法/土或地相关魔法或灵体/魔像/契约型灵体" },
-        { name: "KARA · 权", symbol: [0, 0, 1, 1, 1, 0, 0], core: "主导 压制 秩序", love: "权力不对等/一方占据绝对主导/高压控制下的感情", money: "掌握财权/大额拨款/通过制度、权力和管理获利", work: "晋升/获得决策权/制定游戏规则/面临高层压力", people: "接触权威人士/上下级关系分分明/需要服从或统治", health: "咨询医疗权威专家｜注意心脏负荷、高血压、脑溢血风险、中枢系统压力、核心泵血问题", advice: "行使主导权/制定规则/不要挑战现有秩序", place: "状态：中央/上方<br>类型：政府/领导办公室/舞台/高地/监控室", assoc: "皇冠/棒类/法律文件/钥匙/公章/红色物品", person: "领导/独裁者/决策者/联想到父权制的/高社会地位的", spirit: "状态：魔法强势有力/灵体被控制住<br>类型：控制类魔法/统御型灵体/火相关灵体/父神" },
+        { name: "KARA · 权", symbol: [0, 0, 1, 1, 1, 0, 0], core: "主导 压制 秩序", love: "权力不对等/一方占据绝对主导/高压控制下的感情", money: "掌握财权/大额拨款/通过制度、权力和管理获利", work: "晋升/获得决策权/制定游戏规则/面临高层压力", people: "接触权威人士/上下级关系分明/需要服从或统治", health: "咨询医疗权威专家｜注意心脏负荷、高血压、脑溢血风险、中枢系统压力、核心泵血问题", advice: "行使主导权/制定规则/不要挑战现有秩序", place: "状态：中央/上方<br>类型：政府/领导办公室/舞台/高地/监控室", assoc: "皇冠/棒类/法律文件/钥匙/公章/红色物品", person: "领导/独裁者/决策者/联想到父权制的/高社会地位的", spirit: "状态：魔法强势有力/灵体被控制住<br>类型：控制类魔法/统御型灵体/火相关灵体/父神" },
         { name: "DORU · 守", symbol: [0, 1, 1, 1, 1, 1, 0], core: "防御 隔离 边界", love: "防备/拒绝深入/保护隐私/冷战或分居状态", money: "守财/检查漏洞/防止被侵占/不宜支出", work: "筑墙期/保护现有成果/拦截恶意攻击/拒绝外部合作", people: "界限感极强/排外/社交隔离/圈子封闭", health: "通常是健康的｜可注意免疫系统过度反应、皮肤病、淋巴问题", advice: "筑起防御/守住底线/不要让外界干扰你的核心", place: "状态：后方/西方<br>类型：家中/堡垒/围墙内/隔离区/屏风后", assoc: "盾牌/口罩/锁/护身符/围栏/银色物品", person: "保镖/保守主义者/守门人/高心理防备的", spirit: "状态：魔法防护充足<br>类型：防护型魔法或灵体/屏蔽类魔法/守护灵" },
         { name: "MITA · 识", symbol: [0, 1, 0, 0, 0, 1, 0], core: "意识 认知 思考", love: "注重精神共鸣和深度交流/理智审视关系/重视逻辑而非情绪/建立在共同价值观上的关系", money: "知识变现/靠信息差获利/看清资本运作的底层逻辑/投资和财务决策理智清醒", work: "脑力工作/战略策划/深度研究/发现行业本质/凭逻辑解决问题/认知层面进行降维打击", people: "寻找认知同频者/剔除无效社交/识破人际中的伪装/通过思维深度筛选朋友圈/作为精神领袖或智囊角色", health: "注意睡眠、大脑、神经、心理健康类问题", advice: "升级你的认知/思考事物的本质/此时理智是最好的武器/不要被情绪所蒙蔽", place: "状态：内部/中央<br>类型：图书馆/实验室/学校/档案室/书房", assoc: "书籍/显微镜/刻度尺/神经元模型/发光的晶体/蓝色物品", person: "智者/策划/哲学家/清醒的旁观者/逻辑学家/理智的/大脑活跃的", spirit: "状态：魔法意志明确/灵体已到达/灵体已了解需求<br>类型：与知识和智慧相关的魔法或灵体/真相探寻类的魔法/高度智慧和独立性的灵体" },
         { name: "UMU · 容", symbol: [1, 1, 1, 0, 1, 1, 1], core: "包容 孕育 混沌", love: "“合二为一”的关系/尝试新型关系/尚未定义的感情/与伴侣磨合极佳/接纳关系现状/可能有孕", money: "多种来源的财富/钱生钱/通过生育获得利益", work: "项目孵化/内部调整/吸收意见/多元包容的环境", people: "包容性强的社交/老好人/中转枢纽/容纳人际情绪", health: "通常是健康的｜可注意饮食均衡、体液代谢、水肿、胃胀、腹部积水、子宫及生殖系统问题", advice: "包容心态/接纳一切变数/做一个“杂食者”/现在的模糊是一种保护", place: "状态：八方/中央<br>类型：温室/母婴室/卧室/水池/容器内部/枢纽中心/候机室", assoc: "容器/杯子/靠垫/加湿器/睡袋/母婴用品/五彩斑斓之物", person: "艺术家/魔法师/神秘主义者/母亲/孕妇/协调员/极具包容力的/极具想象力的", spirit: "状态：魔法以超出预期的力量起效<br>类型：没有目的的魔法或灵体/高度抽象的灵体/唯一神/中立灵体/中介灵体/混沌/母神" },
@@ -193,7 +222,6 @@
             col.style.transition = `opacity 1s var(--ease-out-expo) ${index * 0.1}s`;
             col.innerHTML = type === 0 ? '<div class="dot"></div>' : '<div class="dot"></div><div class="dot"></div>';
             area.appendChild(col);
-            // 强制回流以确保动画触发
             void col.offsetWidth;
             col.style.opacity = '1';
         });
@@ -201,40 +229,31 @@
 
     function mishiCast() {
         if(window.navigator.vibrate) window.navigator.vibrate(8);
-        
-        // 1. 先彻底隐藏，给视线一个留白期
         document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
         ['symbolArea', 'infoArea', 'catGrid', 'detailBox'].forEach(id => {
-            const el = document.getElementById(id);
-            el.classList.remove('show');
+            document.getElementById(id).classList.remove('show');
         });
 
-        // 2. 选卦并清空文字
         currentMishi = MISHI_DB[Math.floor(Math.random() * MISHI_DB.length)];
         const nameEl = document.getElementById('mName');
         const coreEl = document.getElementById('mCore');
         const areaEl = document.getElementById('symbolArea');
 
-        // 延迟重置内容，防止闪烁
         setTimeout(() => {
             areaEl.innerHTML = '';
             nameEl.innerText = "";
             coreEl.innerText = "";
-            
-            // 3. 开始自然显现
             drawHorizontalSymbol(currentMishi.symbol);
             areaEl.classList.add('show');
-            
             setTimeout(() => {
                 nameEl.innerText = currentMishi.name;
                 coreEl.innerText = currentMishi.core;
                 document.getElementById('infoArea').classList.add('show');
             }, 800);
-            
             setTimeout(() => {
                 document.getElementById('catGrid').classList.add('show');
             }, 1600);
-        }, 400); // 留白期时长
+        }, 400);
     }
 
     function showDetail(key, event) {
@@ -247,6 +266,8 @@
             const labels = {love:'爱情', money:'金钱', work:'事业', people:'人际', health:'健康', advice:'建议', place:'位置', assoc:'物品', person:'人物', spirit:'神秘'};
             content.innerHTML = `<div class="detail-title">【${labels[key]}】</div><div>${currentMishi[key]}</div>`;
             box.classList.add('show');
+            // 自动滚动到详情区以确保在小屏上可见
+            box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 150);
     }
 
