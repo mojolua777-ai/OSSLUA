@@ -14,93 +14,93 @@
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { 
-            margin: 0; padding: 0; height: 100%; 
+            margin: 0; padding: 0; min-height: 100%; 
             background: var(--sand); color: var(--ink); 
             font-family: "PingFang SC", "STHeiti", sans-serif; 
-            font-weight: 200; overflow: hidden; 
+            font-weight: 200; overflow-x: hidden;
             -webkit-user-select: none; user-select: none;
         }
         #sand-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         
-        /* 优化 app 容器布局 */
+        /* 紧凑型布局：垂直居中 */
         .app { 
-            position: relative; z-index: 10; height: 100%; 
+            position: relative; z-index: 10; 
+            min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; 
-            padding: 40px 20px env(safe-area-inset-bottom); /* 增加顶部间距并考虑安全区域 */
+            justify-content: center; 
+            padding: 20px;
         }
         
-        header { text-align: center; margin-bottom: 5px; flex-shrink: 0; }
+        header { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
         h1 { font-size: 1.6rem; letter-spacing: 12px; margin: 0; font-weight: 100; text-indent: 12px; color: #111; }
         .sub-title { font-size: 0.5rem; color: #ccc; margin-top: 5px; letter-spacing: 3px; }
 
-        /* 让中间的内容区自适应 */
         .content-wrap {
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             width: 100%;
-            max-height: 70vh; /* 限制中间区域高度，防止挤压底部 */
+            max-width: 450px;
         }
 
         .symbol-container {
-            height: 120px; width: 100%; display: flex; flex-direction: row;
-            justify-content: center; align-items: center; margin: 25px 0; 
+            height: 90px; width: 100%; display: flex; flex-direction: row;
+            justify-content: center; align-items: center; margin: 10px 0; 
             opacity: 0; transition: opacity 1.5s var(--ease-out-expo);
         }
         .symbol-container.show { opacity: 1; }
         
         .symbol-column {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            width: 30px; height: 60px; margin: 0 4px;
+            width: 28px; height: 50px; margin: 0 4px;
         }
         .dot { width: var(--dot-size); height: var(--dot-size); background: #111; border-radius: 50%; margin: 4px 0; }
 
-        .basic-info { text-align: center; margin-bottom: 20px; opacity: 0; transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo); transform: translateY(10px); }
+        .basic-info { text-align: center; margin-bottom: 15px; opacity: 0; transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo); transform: translateY(10px); }
         .basic-info.show { opacity: 1; transform: translateY(0); }
-        .m-name { font-size: 1.6rem; letter-spacing: 6px; font-weight: 300; color: #222; }
-        .m-core { font-size: 0.85rem; color: #999; margin-top: 10px; letter-spacing: 4px; }
+        .m-name { font-size: 1.4rem; letter-spacing: 6px; font-weight: 300; color: #222; }
+        .m-core { font-size: 0.8rem; color: #999; margin-top: 8px; letter-spacing: 4px; }
 
         .category-grid {
             display: grid; grid-template-columns: repeat(5, 1fr); 
-            max-width: 420px; width: 100%; opacity: 0; transition: opacity 0.8s var(--ease-out-expo); pointer-events: none;
+            width: 100%; opacity: 0; transition: opacity 0.8s var(--ease-out-expo); pointer-events: none;
             border-top: 1px solid var(--ui-border); border-bottom: 1px solid var(--ui-border); padding: 5px 0;
         }
         .category-grid.show { opacity: 1; pointer-events: auto; }
         
         .cat-btn {
-            background: transparent; border: none; padding: 12px 0; font-size: 0.75rem;
+            background: transparent; border: none; padding: 10px 0; font-size: 0.72rem;
             cursor: pointer; color: #bbb; text-align: center; transition: color 0.3s;
         }
         .cat-btn.active { color: #000; font-weight: 400; }
 
         .detail-box {
-            margin-top: 10px; width: 100%; max-width: 400px; min-height: 120px;
+            margin-top: 10px; width: 100%; min-height: 80px;
             text-align: left; padding: 10px 5px; opacity: 0; transition: opacity 0.5s ease;
-            overflow-y: auto; max-height: 150px;
+            overflow-y: auto; max-height: 140px;
         }
         .detail-box.show { opacity: 1; }
-        .detail-content { font-size: 0.82rem; line-height: 1.7; color: #555; }
-        .detail-title { font-size: 0.9rem; color: #111; font-weight: 400; display: block; margin-bottom: 8px; border-left: 3px solid #111; padding-left: 10px; }
+        .detail-content { font-size: 0.82rem; line-height: 1.6; color: #555; }
+        .detail-title { font-size: 0.85rem; color: #111; font-weight: 400; display: block; margin-bottom: 6px; border-left: 3px solid #111; padding-left: 10px; }
 
-        /* 底部触发组增加下边距，远离 footer */
         .trigger-group { 
             display: flex; flex-direction: column; align-items: center; 
-            margin-top: 20px; margin-bottom: 60px; /* 关键：确保不紧贴底部 */
+            margin-top: 25px; 
             flex-shrink: 0;
         }
-        .trigger-hint { font-size: 0.65rem; color: #ccc; letter-spacing: 3px; margin-bottom: 10px; }
+        .trigger-hint { font-size: 0.6rem; color: #ccc; letter-spacing: 3px; margin-bottom: 10px; }
         .main-trigger {
-            background: transparent; border: 1px solid rgba(0,0,0,0.1); padding: 12px 35px; 
+            background: transparent; border: 1px solid rgba(0,0,0,0.1); padding: 10px 32px; 
             border-radius: 30px; font-size: 0.85rem; cursor: pointer; letter-spacing: 8px; transition: 0.3s; 
             color: #444; text-indent: 8px; font-weight: 300;
         }
         .main-trigger:active { background: #fafafa; transform: scale(0.96); }
 
         .footer { 
-            position: absolute; bottom: 20px; width: 100%; text-align: center; 
-            font-size: 0.5rem; color: #ddd; z-index: 10; line-height: 1.5;
+            width: 100%; text-align: center; 
+            font-size: 0.5rem; color: #ddd; 
+            line-height: 1.5; padding: 30px 0 10px 0;
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -143,25 +143,25 @@
 
 <script>
     const MISHI_DB = [
-        { name: "ARA · 逸", symbol: [1, 0, 1, 0, 1, 0, 1], core: "外放 脱离 扩散", love: "关系趋向自由或疏离/若在温存期，暗示需要个人空间/单身者易有短暂关系或肉体关系", money: "财气外溢，进账快但守不住，但适合高流动性投资", work: "工作自由或无业/适合创意、跨界或出差/若工作感到压抑，则暗示该跳槽了", people: "散漫不深入的社交网络/会认识远方或背景完全不同的人", health: "通常是健康的｜可注意呼吸系统、传染、注意力/专注力类问题", advice: "让自己处在放松、洒脱的心态/不要试图抓紧，放手试试看", place: "状态：上方/北方<br>类型：机场/楼顶/开阔广场/通风口/空中", assoc: "风铃/羽毛/气流调节设备/会飞或处在空中的物件", person: "自由职业者/飞行员/性格飘忽不定的/自由散漫的 /远方客人", spirit: "状态：能量不够集中/灵体没有到达或形成（除非符合【类型】的内容）<br>类型：属于风/空/扩散需求/自由目的相关的魔法或灵体" },
-        { name: "VIRA · 战", symbol: [0, 0, 0, 1, 0, 0, 0], core: "对抗 竞争 剧烈", love: "关系处于暧昧博弈期/和伴侣常发生冲突矛盾甚至出现暴力/与情敌竞争/暴力的性爱/BDSM", money: "财运来自风险与争夺/可能涉及法律诉讼或强行讨债", work: "攻坚阶段/职场竞争/交涉展现强硬姿态", people: "关系紧张/容易遇到挑衅者或敌/也可能因为对抗而产生深刻联结", health: "通常不健康｜注意急性疾病、发热发烧、炎症、外伤出血、高血压、胆囊、应激性问题", advice: "用行动和力量说话/此时后退会输掉全局", place: "状态：前方/南方<br>类型：健身房/炎热场所/战场/战争遗址/繁忙区域", assoc: "刀具/热的东西/武器/金属器械/红色物品/火源", person: "战士/对手/运动员/好战者/急躁的/皮肤黝黑的/肌肉发达的", spirit: "状态：魔法剧烈生效/可能导致过度干预/危险灵体（除非符合【类型】的内容）<br>类型：属于战神类、防护型或极具攻击性的魔法或灵性" },
-        { name: "ELWA · 变", symbol: [1, 1, 1, 0, 1, 1, 1], core: "移动 迁转 变化", love: "感情变动/异地恋/和伴侣搬迁、旅行", money: "高流动性财富/物流/远距贸易/静坐守财反而会导致亏损", work: "职位调动/项目转型/目前的工作地点或内容发生改变", people: "贵人在远方或旅途之中 需要频繁出访或保持联络才能维系人脉", health: "健康情况来回浮动｜病情迎来转变/注意臀部、腿、足、关节问题", advice: "迎接变化/去旅行/选择搬家", place: "状态：右侧/东方<br>类型：路上/交通场所/物流仓库/管道中", assoc: "鞋/地图/行李箱/指南针/交通工具/五颜六色的物品", person: "信使/中介/司机/向导/频繁出差的/易变的/成长型的", spirit: "状态：魔法在发挥作用/灵体来去匆匆<br>类型：形象不定的灵体/带来转变的魔法或灵体/遥远的灵体/远距离施展的魔法" },
-        { name: "ZERA · 始", symbol: [0, 1, 1, 1, 1, 1, 1], core: "开端 萌芽 潜力", love: "新火花/暧昧萌芽/不成熟的恋情/可能怀孕的信号", money: "新财路出现/投入期/目前见不到回头钱/适合小额试水", work: "新项目立项/职业生涯转折点/一切规则尚不明确/容易夭折", people: "结交新势力/初次接触/尚未建立深层信任", health: "注意增生、过敏反应、发疹、轻微偏头痛、新生组织的病变、免疫系统应激", advice: "耐心守护雏形/不要拔苗助长/坚持创新", place: "状态：上方/东方<br>类型：新家/产房/实验室/新装修的房间/苗圃", assoc: "新东西/种子/幼苗/蛋类/日历第一页/新生儿用品/透明物品", person: "创始人/学徒/新手/刚步入社会的/充满好奇心的", spirit: "状态：魔法刚开始生效/灵体刚到达<br>类型：创造型魔法或灵体/新型魔法或灵体/孩童灵体/星光机器" },
-        { name: "OTO · 执", symbol: [1, 1, 1, 1, 1, 1, 1], core: "稳固 僵化 承载", love: "关系稳固/对某人执念/高责任感/感到压抑/冷战", money: "固定资产/长期持有/现金流缓慢/守财", work: "事业定型/守成期/难以做出改变/承担沉重的管理责任", people: "老友/可靠但保守的盟友/关系难以逾越既定边界", health: "通常是健康的｜可注意骨头、脊椎僵硬、结石、组织钙化、牙齿问题", advice: "坚持现状/打好基础/不要破坏地基/稳固比突破更重要", place: "状态：中央/下方<br>类型：地上/地窖/山/地基/石头建筑/保险库", assoc: "固体/坚硬物品/印章/石头/保险柜/金色物品", person: "长辈/守财奴/房地产商/固执的/值得信赖的", spirit: "状态：魔法稳定成功/灵体长期驻留<br>类型：束缚类魔法/土或地相关魔法或灵体/魔像/契约型灵体" },
-        { name: "KARA · 权", symbol: [0, 0, 1, 1, 1, 0, 0], core: "主导 压制 秩序", love: "权力不对等/一方占据绝对主导/高压控制下的感情", money: "掌握财权/大额拨款/通过制度、权力和管理获利", work: "晋升/获得决策权/制定游戏规则/面临高层压力", people: "接触权威人士/上下级关系分明/需要服从或统治", health: "咨询医疗权威专家｜注意心脏负荷、高血压、脑溢血风险、中枢系统压力、核心泵血问题", advice: "行使主导权/制定规则/不要挑战现有秩序", place: "状态：中央/上方<br>类型：政府/领导办公室/舞台/高地/监控室", assoc: "皇冠/棒类/法律文件/钥匙/公章/红色物品", person: "领导/独裁者/决策者/联想到父权制的/高社会地位的", spirit: "状态：魔法强势有力/灵体被控制住<br>类型：控制类魔法/统御型灵体/火相关灵体/父神" },
-        { name: "DORU · 守", symbol: [0, 1, 1, 1, 1, 1, 0], core: "防御 隔离 边界", love: "防备/拒绝深入/保护隐私/冷战或分居状态", money: "守财/检查漏洞/防止被侵占/不宜支出", work: "筑墙期/保护现有成果/拦截恶意攻击/拒绝外部合作", people: "界限感极强/排外/社交隔离/圈子封闭", health: "通常是健康的｜可注意免疫系统过度反应、皮肤病、淋巴问题", advice: "筑起防御/守住底线/不要让外界干扰你的核心", place: "状态：后方/西方<br>类型：家中/堡垒/围墙内/隔离区/屏风后", assoc: "盾牌/口罩/锁/护身符/围栏/银色物品", person: "保镖/保守主义者/守门人/高心理防备的", spirit: "状态：魔法防护充足<br>类型：防护型魔法或灵体/屏蔽类魔法/守护灵" },
-        { name: "MITA · 识", symbol: [0, 1, 0, 0, 0, 1, 0], core: "意识 认知 思考", love: "注重精神共鸣和深度交流/理智审视关系/重视逻辑而非情绪/建立在共同价值观上的关系", money: "知识变现/靠信息差获利/看清资本运作的底层逻辑/投资和财务决策理智清醒", work: "脑力工作/战略策划/深度研究/发现行业本质/凭逻辑解决问题/认知层面进行降维打击", people: "寻找认知同频者/剔除无效社交/识破人际中的伪装/通过思维深度筛选朋友圈/作为精神领袖或智囊角色", health: "注意睡眠、大脑、神经、心理健康类问题", advice: "升级你的认知/思考事物的本质/此时理智是最好的武器/不要被情绪所蒙蔽", place: "状态：内部/中央<br>类型：图书馆/实验室/学校/档案室/书房", assoc: "书籍/显微镜/刻度尺/神经元模型/发光的晶体/蓝色物品", person: "智者/策划/哲学家/清醒的旁观者/逻辑学家/理智的/大脑活跃的", spirit: "状态：魔法意志明确/灵体已到达/灵体已了解需求<br>类型：与知识和智慧相关的魔法或灵体/真相探寻类的魔法/高度智慧和独立性的灵体" },
-        { name: "UMU · 容", symbol: [1, 1, 1, 0, 1, 1, 1], core: "包容 孕育 混沌", love: "“合二为一”的关系/尝试新型关系/尚未定义的感情/与伴侣磨合极佳/接纳关系现状/可能有孕", money: "多种来源的财富/钱生钱/通过生育获得利益", work: "项目孵化/内部调整/吸收意见/多元包容的环境", people: "包容性强的社交/老好人/中转枢纽/容纳人际情绪", health: "通常是健康的｜可注意饮食均衡、体液代谢、水肿、胃胀、腹部积水、子宫及生殖系统问题", advice: "包容心态/接纳一切变数/做一个“杂食者”/现在的模糊是一种保护", place: "状态：八方/中央<br>类型：温室/母婴室/卧室/水池/容器内部/枢纽中心/候机室", assoc: "容器/杯子/靠垫/加湿器/睡袋/母婴用品/五彩斑斓之物", person: "艺术家/魔法师/神秘主义者/母亲/孕妇/协调员/极具包容力的/极具想象力的", spirit: "状态：魔法以超出预期的力量起效<br>类型：没有目的的魔法或灵体/高度抽象的灵体/唯一神/中立灵体/中介灵体/混沌/母神" },
-        { name: "NERA · 欲", symbol: [1, 0, 0, 0, 0, 0, 1], core: "情绪 欲望 感受", love: "浪漫/暧昧/戏剧性感情/由欲而生的爱/猜忌与沉溺/情绪勒索", money: "情绪化消费/赌徒心理/财运随心情起伏/不理智投资", work: "职场关系感性化/艺术敏感度高/逻辑混乱导致错误", people: "情感依赖/容易受暗示/社交圈充满非理智的流言", health: "注意肝火旺盛、内分泌失调、经期波动、心理/精神健康、泪腺、性相关问题", advice: "觉知你的欲望/释放情绪/尊重自己的感受/相信直觉", place: "状态：左侧/西方<br>类型：卧室/剧院/酒吧/暗房/充满回忆的地方/艺术馆", assoc: "酒瓶/丝巾/镜子/具有情感价值的物品/红色或粉色物品", person: "艺术家/瘾君子/多愁善感的/极具魅力的/直觉敏锐的", spirit: "状态：魔法的欲求充沛/灵体感到满足<br>类型：性、情绪、爱或欲望相关的魔法或灵体" },
-        { name: "SELA · 言", symbol: [1, 1, 1, 1, 0, 0, 0], core: "表达 沟通 文字", love: "言语定情/说情话/写情书/受流言蜚语影响关系/网络恋情", money: "靠口才生财/信息差收益/佣金/可能因泄密赔钱", work: "公关/文案/演讲/信息爆发期/需要频繁开会和沟通", people: "消息灵通/处在八卦中心/适合化解误解或制造舆论", health: "需向医护人员咨询｜可注意口舌、耳朵、手部问题", advice: "充分表达/注意口舌是非/利用信息差", place: "状态：前方/上方<br>类型：广播塔/会议室/咖啡馆/电话亭/书店", assoc: "电子设备/信件/笔/纸/书本/蓝色物品/食物", person: "翻译/讲师/中介/记者/话多的/口才好的/嘴巴吸引人的", spirit: "状态：魔法正在运作/与灵体沟通中<br>类型：信息相关的魔法或灵体/自律机器/爱沟通的灵体" },
-        { name: "FINO · 末", symbol: [1, 1, 1, 1, 1, 1, 0], core: "结束 切割 分离", love: "关系断裂/切断纠缠", money: "停止亏损/账目清算/及时止损/买定离手", work: "项目终止/离职/合同到期/彻底清扫工作痕迹", people: "退出圈子/绝交/两清状态", health: "通常不健康｜死亡或临终（极少情况）、癌症、器官切除、注意肛肠部位问题", advice: "干净利落地结束/不要徘徊和试图修补", place: "状态：右侧/远处<br>类型：垃圾场/终点站/手术室/殡仪馆/墓地/边界线", assoc: "失物/剪刀/灭火器/清算报告/手术刀/废纸篓/墓碑", person: "殡葬行业/离职者/执行切割的人/前任", spirit: "状态：魔法影响结束/灵体已离开<br>类型：死亡或终结性质的魔法/幽灵/死亡相关的灵体" },
-        { name: "VARA · 蚀", symbol: [1, 1, 1, 1, 0, 0, 0], core: "损失 消耗 侵蚀", love: "情感流失/情绪内耗/吸血寄生关系/一方在无底线索取/情感疲惫", money: "破财/被诈骗/金钱损耗/缴纳罚款", work: "工作焦虑/被剥削/白忙一场/损失机会/被窃取成果", people: "损友/被吸血/社交让自己感到疲惫", health: "通常不健康｜注意感染、低血糖、营养不良、脱水、贫血、肾、肝问题", advice: "立刻止损/停止向外输出/检查遗漏和缺口", place: "状态：下方/远处<br>类型：下水道/废墟/荒地/工厂/垃圾场", assoc: "破损物/侵蚀性液体/欠条/垃圾/红色物品", person: "债主/寄生虫/虚弱的/倒霉的", spirit: "状态：魔法难以成效/灵体威胁或未召唤成功<br>类型：寄生型灵体/索取代价的灵体" },
-        { name: "KETH · 溃", symbol: [1, 1, 0, 0, 0, 1, 1], core: "坍塌 崩溃 突发", love: "断崖式分手/感情丑闻/突然断联/伴侣出现意外", money: "突然亏损/财务系统瘫痪/破产", work: "突然被裁/团队解散/项目被砍/工作失控/被迫离职", people: "绝交/暴力事件/人设崩塌/名誉扫地", health: "通常不健康｜注意突发疾病、恶性肿瘤、急性穿孔、代谢系统崩溃、意外伤害", advice: "在灰烬中寻找重生/不要试图挽救烂摊子", place: "状态：左下方/西南<br>类型：危楼/地震遗迹/爆破现场/灾难现场", assoc: "碎玻璃/故障物/断裂的支架/炸药", person: "破坏者/疯子/革命家/失败者/自暴自弃的/易燃易爆的", spirit: "状态：魔法发生不良转变/灵体带来危害（除非符合【类型】的内容）<br>类型：破坏性的魔法或灵体/敌对且强大的灵体" },
-        { name: "UNNA · 生", symbol: [0, 0, 0, 0, 1, 1, 1], core: "滋养 积累 丰饶", love: "桃花旺盛/互相支持/物质条件优良/温暖的呵护/适合备孕/感情进入收获期", money: "富有/钱生钱/财气积聚/长线投资获利/资源不断", work: "伯乐提携/资源富足/事业上升期/环境极其友好", people: "贵人环绕/慈悲的长辈/社交氛围极具滋养感", health: "通常是健康的 | 注意营养过剩、肥胖、脾脏问题、乳腺/淋巴增生、过度吸收", advice: "耐心培育/现在是积累期/利用好现有的丰富资源", place: "状态：中央/上方/内部<br>类型：厨房/食堂/家乡/母亲房间/粮库/花房/港湾", assoc: "植物/温水/药品/蔬果/母乳/丝织品/绿色物品", person: "母亲/导师/保姆/慷慨的/丰满的/爱照顾人的", spirit: "状态：魔法效果令人满足/灵体合作顺利<br>类型：丰饶相关魔法和灵体/植物相关魔法和灵体/祖先灵/慈悲灵体/地母" },
-        { name: "LUMA · 显", symbol: [0, 0, 0, 0, 0, 0, 0], core: "光明 荣耀 显露", love: "恋情公开/告白/秘密被揭露/光彩夺目的吸引力", money: "名声变现/获得荣誉奖励/公开的财富/展示自己以求财", work: "职业高光时刻/成果被看见/面试成功/成为行业标杆", people: "成为焦点/无法隐藏/社交影响力高", health: "通常是健康的 | 注意眼压升高、日光性皮炎、面部神经问题、幻视", advice: "大胆展示自己/站在阳光下/诚实是最好的武器", place: "状态：上方/前方<br>类型：舞台/阳台/领奖台/阳光房/开阔展厅/高处", assoc: "镜子/灯/证件/照片/发光体/白色物品", person: "明星/博主/主播/引路人/揭秘者/诚实的", spirit: "状态：魔法大成功/灵体已到来<br>类型：光相关的魔法或灵体/主流宗教神祇" },
-        { name: "TERA · 根", symbol: [0, 1, 0, 1, 0, 1, 0], core: "根基 连结 传承", love: "门当户对/相亲/受中介人影响的关系/熟人成伴侣/同族伴侣", money: "地缘财/房产/家族遗产/深厚的物质积累/人际生财", work: "平台强大/大机构或大企业/老字号/基础深厚/适合深耕实业/家族继承事业", people: "同宗同源/依靠家族亲戚/能提供实质资源的商业伙伴", health: "通常是健康的 | 注意遗传病、盆腔炎、股骨头问题、前列腺问题、便秘、下肢沉重", advice: "利用你的背景/利用人际关系/向下扎根/不要频繁变动位置", place: "状态：下方/中心<br>类型：老家/祖宅/矿井/地下室/地基/植物附近", assoc: "砖石/地板/地毯/矿/祖传物件/树/绿色物品", person: "实业家/继承人/地主/族长/老者", spirit: "状态：魔法基础扎实/魔法稳定有力/灵体成功关联上<br>类型：古老传承的魔法或灵体/老人形态的灵体/树精/自然系魔法或灵体" },
-        { name: "LOWA · 隐", symbol: [1, 1, 1, 1, 1, 1, 1], core: "黑暗 隐瞒 潜伏", love: "偷情/不可说的秘密/暗中观察/表里不一/不被社会普遍接受的关系", money: "潜伏财/未公开的账目/洗钱/灰色收入/隐形开支", work: "幕后操作/潜规则/对手在暗处/不宜公开计划", people: "有人暗中关注/伪装者/社交圈中的潜伏者", health: "注意暗病、潜伏期疾病、隐性炎症、肿瘤初期、松果体异常、视力障碍", advice: "敌明我暗/保持静默/在阴影中寻找机会/还不是出击的时候", place: "状态：后方/暗处<br>类型：夹缝/暗室/墙壁内侧/深海/角落", assoc: "面具/监控镜头/遮盖物/隐身衣/窃听器/黑色物体", person: "间谍/观察者/幕后推手/阴沉的", spirit: "状态：魔法没能生效/灵体已送走/灵体未到达（除非满足【类型】内容）<br>类型：隐藏型魔法/黑暗相关的魔法或灵体" },
-        { name: "MORA · 业", symbol: [0, 1, 1, 1, 1, 1, 0], core: "因果 纠缠 轮回", love: "业力重逢/灵魂伴侣/前世今生的纠缠/亏欠/无法逃避的因果关系", money: "归还财/旧债清偿/因果报应引发的财务变动", work: "旧帐重提/工作遗留问题处理/重复以前的职业轨迹", people: "宿命般的相遇/因果牵引的相见/逃不掉的人脉", health: "注意遗传性疾病、病复发、DNA层面问题、精神健康", advice: "顺应因果/偿还旧账/接受命中注定的安排", place: "状态：中央/远后方<br>类型：博物馆/圆形场地/古迹/老宅/轮回之地/宗教场所/祭坛", assoc: "古董/老照片/族谱/旧钟表/转经筒/祭坛", person: "宿命之人/灵魂伴侣/编织者/曾亏欠你的人", spirit: "状态：魔法或灵体造成的后果需要注意<br>类型：命运相关的魔法或灵体/冤亲债主/东方宗教神祇" }
+        { name: "ARA · 逸", symbol: [1, 0, 1, 0, 1, 0, 1], core: "外放 脱离 扩散", love: "关系趋向自由或疏离", money: "财气外溢，守不住", work: "工作自由或跳槽信号", people: "散漫社交，结识远方人", health: "注意呼吸系统、传染类", advice: "放手，不要试图抓紧", place: "方位：上方/北方<br>场所：机场/楼顶/开阔广场/通风口", assoc: "状态：悬浮/轻盈<br>类型：风铃/羽毛/气流调节设备", person: "自由职业者/飞行员/飘忽不定的人", spirit: "状态：能量扩散中<br>类型：属于风/空相关的灵体" },
+        { name: "VIRA · 战", symbol: [0, 0, 0, 1, 0, 0, 0], core: "对抗 竞争 剧烈", love: "冲突、博弈、剧烈感情", money: "风险财、法律纠纷、讨债", work: "攻坚、职场竞争、态度强硬", people: "关系紧张、遇到挑衅者", health: "炎症、发热、外伤出血", advice: "用行动说话，不可后退", place: "方位：前方/南方<br>场所：健身房/战场/繁忙区域", assoc: "状态：锋利/灼热<br>类型：刀具/武器/红色物品/火源", person: "战士/对手/运动员/急躁的人", spirit: "状态：魔法剧烈生效中<br>类型：极具攻击性的灵体" },
+        { name: "ELWA · 变", symbol: [1, 1, 1, 0, 1, 1, 1], core: "移动 迁转 变化", love: "感情变动、异地、旅行", money: "高流动性、物流贸易", work: "调动、转型、地点改变", people: "贵人在远方或旅途中", health: "注意腿足、关节问题", advice: "迎接变化，去旅行或搬家", place: "方位：右侧/东方<br>场所：路上/交通枢纽/物流仓库", assoc: "状态：动态/多色<br>类型：鞋/地图/行李箱/交通工具", person: "信使/中介/司机/向导", spirit: "状态：来去匆匆<br>类型：形象不定的灵体" },
+        { name: "ZERA · 始", symbol: [0, 1, 1, 1, 1, 1, 1], core: "开端 萌芽 潜力", love: "新火花、暧昧萌芽、怀孕", money: "新财路、投入期、试水", work: "新立项、职业转折点", people: "新势力、初次接触", health: "增生、过敏、新生病变", advice: "耐心守护雏形，不要拔苗助长", place: "方位：上方/东方<br>场所：新家/产房/苗圃", assoc: "状态：新生/透明<br>类型：种子/幼苗/蛋/日历第一页", person: "创始人/学徒/新手", spirit: "状态：刚开始生效<br>类型：创造型魔法或孩童灵体" },
+        { name: "OTO · 执", symbol: [1, 1, 1, 1, 1, 1, 1], core: "稳固 僵化 承载", love: "关系稳固、执念、感到压抑", money: "固定资产、守财、现金流慢", work: "守成期、难以改变、高管理责", people: "老友、可靠但保守的盟友", health: "骨头、脊椎僵硬、结石", advice: "打好基础，坚持现状", place: "方位：中央/下方<br>场所：地窖/山/地基/保险库", assoc: "状态：坚硬/沉重<br>类型：石头/印章/保险柜", person: "长辈/守财奴/房地产商", spirit: "状态：长期驻留<br>类型：束缚类魔法或土灵" },
+        { name: "KARA · 权", symbol: [0, 0, 1, 1, 1, 0, 0], core: "主导 压制 秩序", love: "权力不对等、高压控制", money: "掌握财权、通过管理获利", work: "晋升、决策、制定规则", people: "权威人士、上下级分明", health: "心脏负荷、高血压", advice: "行使主导权，制定规则", place: "方位：中央/上方<br>场所：政府/领导办公室/高地", assoc: "状态：核心/统御<br>类型：皇冠/权杖/公章/钥匙", person: "领导/独裁者/高地位者", spirit: "状态：强势统领<br>类型：控制类魔法或神祇" },
+        { name: "DORU · 守", symbol: [0, 1, 1, 1, 1, 1, 0], core: "防御 隔离 边界", love: "防备、拒绝深入、保护隐私", money: "守财、防盗、不宜支出", work: "筑墙、保护成果、拒绝合作", people: "界限感强、圈子封闭", health: "免疫系统、皮肤病", advice: "筑起防御，守住底线", place: "方位：后方/西方<br>场所：家中/堡垒/屏风后/隔离区", assoc: "状态：封闭/银色<br>类型：盾牌/锁/护身符/围栏", person: "保镖/守门人/保守主义者", spirit: "状态：防护充足<br>类型：屏蔽类魔法或守护灵" },
+        { name: "MITA · 识", symbol: [0, 1, 0, 0, 0, 1, 0], core: "意识 认知 思考", love: "精神共鸣、理智审视关系", money: "知识变现、靠信息差获利", work: "脑力工作、战略策划、研究", people: "寻找同频者、识破伪装", health: "大脑、神经、心理健康", advice: "升级认知，思考事物本质", place: "方位：内部/中央<br>场所：图书馆/实验室/书房", assoc: "状态：发光/逻辑<br>类型：书籍/显微镜/刻度尺", person: "智者/策划/哲学家", spirit: "状态：意志明确<br>类型：与智慧相关的灵体" },
+        { name: "UMU · 容", symbol: [1, 1, 1, 0, 1, 1, 1], core: "包容 孕育 混沌", love: "接纳现状、合二为一、磨合", money: "多种来源、通过生育获利", work: "项目孵化、吸收意见、多元化", people: "包容社交、老好人、枢纽", health: "体液代谢、水肿、腹部", advice: "包容心态，接纳变数", place: "方位：八方/中央<br>场所：温室/卧室/枢纽中心", assoc: "状态：容纳/多彩<br>类型：容器/杯子/加湿器", person: "母亲/艺术家/协调员", spirit: "状态：力量交织中<br>类型：中性或混沌灵体" },
+        { name: "NERA · 欲", symbol: [1, 0, 0, 0, 0, 0, 1], core: "情绪 欲望 感受", love: "浪漫、沉溺、戏剧性感情", money: "情绪消费、赌徒心理", work: "感性化、艺术敏感度高", people: "情感依赖、容易受暗示", health: "内分泌、经期、精神健康", advice: "觉知欲望，相信直觉", place: "方位：左侧/西方<br>场所：卧室/剧院/酒吧/暗房", assoc: "状态：迷幻/红色<br>类型：酒瓶/丝巾/镜子", person: "艺术家/多愁善感的人", spirit: "状态：欲求充沛<br>类型：情感类灵体" },
+        { name: "SELA · 言", symbol: [1, 1, 1, 1, 0, 0, 0], core: "表达 沟通 文字", love: "言语定情、网络恋情、流言", money: "口才生财、信息收益、佣金", work: "公关、文案、频繁会议", people: "消息灵通、化解误解", health: "口舌、耳朵、手部问题", advice: "充分表达，注意口舌是非", place: "方位：前方/上方<br>场所：会议室/咖啡馆/广播塔", assoc: "状态：传播/蓝色<br>类型：电子设备/书信/笔", person: "翻译/讲师/记者", spirit: "状态：正在沟通<br>类型：信息相关的灵体" },
+        { name: "FINO · 末", symbol: [1, 1, 1, 1, 1, 1, 0], core: "结束 切割 分离", love: "关系断裂、切断纠缠", money: "停止亏损、账目清算", work: "离职、合同到期、清扫痕迹", people: "退出圈子、绝交两清", health: "肿瘤切除、疾病终结", advice: "干净利落地结束，不要修补", place: "方位：右侧/远处<br>场所：终点站/手术室/墓地", assoc: "状态：残缺/切割<br>类型：剪刀/灭火器/垃圾箱", person: "离职者/执行切割的人", spirit: "状态：已离开/终结<br>类型：幽灵或死神" },
+        { name: "VARA · 蚀", symbol: [1, 1, 1, 1, 0, 0, 0], core: "损失 消耗 侵蚀", love: "情感流失、吸血寄生关系", money: "破财、被诈骗、缴纳罚款", work: "被剥削、白忙一场、焦虑", people: "损友、社交疲惫", health: "感染、贫血、脱水", advice: "立刻止损，停止向外输出", place: "方位：下方/远处<br>场所：下水道/废墟/荒地", assoc: "状态：破损/红色<br>类型：欠条/侵蚀性液体", person: "债主/寄生虫/虚弱的人", spirit: "状态：难以生效<br>类型：索取代价的灵体" },
+        { name: "KETH · 溃", symbol: [1, 1, 0, 0, 0, 1, 1], core: "坍塌 崩溃 突发", love: "断崖分手、突然断联", money: "突然亏损、破产、瘫痪", work: "突然被裁、项目被砍、失控", people: "暴力事件、人设崩塌", health: "急性疾病、突发伤害", advice: "在灰烬中重组，不要挽救", place: "方位：左下/西南<br>场所：危楼/爆破现场/灾难地", assoc: "状态：粉碎/故障<br>类型：碎玻璃/炸药", person: "破坏者/疯子/失败者", spirit: "状态：发生不良转变<br>类型：破坏性灵体" },
+        { name: "UNNA · 生", symbol: [0, 0, 0, 0, 1, 1, 1], core: "滋养 积累 丰饶", love: "支持、滋养、进入收获期", money: "富有、资源积聚、长线获利", work: "伯乐提携、资源富足", people: "贵人、慈悲的长辈", health: "注意营养过剩、脾脏", advice: "耐心培育，利用现有资源", place: "方位：中央/内部<br>场所：厨房/温室/港湾", assoc: "状态：丰富/绿色<br>类型：植物/蔬果/母乳", person: "母亲/导师/慷慨的人", spirit: "状态：效果满足<br>类型：地母或祖先灵" },
+        { name: "LUMA · 显", symbol: [0, 0, 0, 0, 0, 0, 0], core: "光明 荣耀 显露", love: "恋情公开、显露吸引力", money: "名声变现、公开奖励", work: "高光时刻、成果被看见", people: "成为焦点、无法隐藏", health: "眼压、日光性皮炎", advice: "大胆展示，诚实面对", place: "方位：上方/前方<br>场所：舞台/阳光房/高处", assoc: "状态：发光/白色<br>类型：镜子/灯/证件", person: "明星/主播/引路人", spirit: "状态：大成功<br>类型：光相关的灵体" },
+        { name: "TERA · 根", symbol: [0, 1, 0, 1, 0, 1, 0], core: "根基 连结 传承", love: "门当户对、相亲关系", money: "房产、家族遗产、实业", work: "大机构、老字号、扎根深耕", people: "同宗同源、实质资源伙伴", health: "遗传病、骨盆、下肢", advice: "向下扎根，利用家族背景", place: "方位：下方/中心<br>场所：老家/祖宅/矿井", assoc: "状态：扎根/绿色<br>类型：砖石/矿/树", person: "实业家/继承人/族长", spirit: "状态：基础扎实<br>类型：古老传承灵体" },
+        { name: "LOWA · 隐", symbol: [1, 1, 1, 1, 1, 1, 1], core: "黑暗 隐瞒 潜伏", love: "暗中观察、不可说秘密", money: "洗钱、灰色收入、潜伏财", work: "幕后操作、潜规则、暗箭", people: "有人暗中关注、伪装者", health: "暗病、潜伏期、视力障碍", advice: "敌明我暗，保持静默", place: "方位：后方/暗处<br>场所：墙壁内侧/深海/角落", assoc: "状态：遮盖/黑色<br>类型：面具/监控/遮盖物", person: "间谍/观察者/幕后推手", spirit: "状态：未生效/潜行<br>类型：黑暗灵体" },
+        { name: "MORA · 业", symbol: [0, 1, 1, 1, 1, 1, 0], core: "因果 纠缠 轮回", love: "灵魂伴侣、前世纠葛", money: "归还财、旧债清偿、报应", work: "旧账重提、重复职业轨迹", people: "宿命般的相遇、逃不掉", health: "遗传病、心理健康", advice: "顺应因果，偿还旧账", place: "方位：中央/远方<br>场所：博物馆/宗教场所/祭坛", assoc: "状态：轮回/古旧<br>类型：古董/旧钟表/族谱", person: "宿命之人/曾亏欠你的人", spirit: "状态：后果呈现中<br>类型：命运相关的灵体" }
     ];
 
     const MISHI_CODES = MISHI_DB.map(m => m.symbol);
@@ -266,7 +266,6 @@
             const labels = {love:'爱情', money:'金钱', work:'事业', people:'人际', health:'健康', advice:'建议', place:'位置', assoc:'物品', person:'人物', spirit:'神秘'};
             content.innerHTML = `<div class="detail-title">【${labels[key]}】</div><div>${currentMishi[key]}</div>`;
             box.classList.add('show');
-            // 自动滚动到详情区以确保在小屏上可见
             box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 150);
     }
